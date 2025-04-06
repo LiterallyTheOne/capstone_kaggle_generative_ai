@@ -5,3 +5,6 @@ google-auth
 google-auth-oauthlib
 pillow
 pybullet
+imageio-ffmpeg
+matplotlib
+opencv-python
