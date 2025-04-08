@@ -101,6 +101,39 @@ def robot_home(robot_id, gripper_id):
         )
 
 
+def control_gripper(gripper_id, gripper_val):
+    """Control the gripper to open or close."""
+    p.setJointMotorControl2(
+        gripper_id,
+        4,
+        p.POSITION_CONTROL,
+        targetPosition=gripper_val * 0.05,
+        force=100,
+    )
+    p.setJointMotorControl2(
+        gripper_id,
+        6,
+        p.POSITION_CONTROL,
+        targetPosition=gripper_val * 0.05,
+        force=100,
+    )
+
+
+def go_to_target(robot_id, target_pos, end_effector_index=6):
+    """Move the robot to the target position."""
+    target_orn = p.getQuaternionFromEuler([0, 1.01 * math.pi, 0])
+    joint_poses = p.calculateInverseKinematics(
+        robot_id, end_effector_index, target_pos, target_orn
+    )
+    for j in range(p.getNumJoints(robot_id)):
+        p.setJointMotorControl2(
+            bodyIndex=robot_id,
+            jointIndex=j,
+            controlMode=p.POSITION_CONTROL,
+            targetPosition=joint_poses[j],
+        )
+
+
 def load_robot_with_gripper():
     """Load the KUKA robot with a gripper attached."""
     robot_id = p.loadURDF(
@@ -181,37 +214,16 @@ def main():
     for step in range(1000):
         _, _, rgb, _, _ = cam.capture()
 
-        target_pos = [1.0, -0.5, 0.3]
-        gripper_val = 0
-        if step > 500:
-            gripper_val = 1
+        target_pos = [0.85, -0.2, 0.5]
+        gripper_val = 0.0
 
-        target_orn = p.getQuaternionFromEuler([0, 1.01 * math.pi, 0])
-        joint_poses = p.calculateInverseKinematics(
-            robot_id, end_effector_index, target_pos, target_orn
+        go_to_target(
+            robot_id,
+            target_pos,
+            end_effector_index=end_effector_index,
         )
-        for j in range(num_joints):
-            p.setJointMotorControl2(
-                bodyIndex=robot_id,
-                jointIndex=j,
-                controlMode=p.POSITION_CONTROL,
-                targetPosition=joint_poses[j],
-            )
 
-        p.setJointMotorControl2(
-            gripper_id,
-            4,
-            p.POSITION_CONTROL,
-            targetPosition=gripper_val * 0.05,
-            force=100,
-        )
-        p.setJointMotorControl2(
-            gripper_id,
-            6,
-            p.POSITION_CONTROL,
-            targetPosition=gripper_val * 0.05,
-            force=100,
-        )
+        control_gripper(gripper_id, gripper_val)
 
         p.stepSimulation()
         time.sleep(1.0 / 240.0)
