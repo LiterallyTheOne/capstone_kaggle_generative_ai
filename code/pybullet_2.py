@@ -208,7 +208,10 @@ def main():
     # robot_id = load_kuka_with_gripper()[0]
 
     robot_id, gripper_id = load_robot_with_gripper()
-    # add_cube([0.85, -0.2, 0])
+    add_cube([0.2, 0.2, 0.01], [1, 0, 0, 1])
+    add_cube([0, 0.2, 0.01], [0, 1, 0, 1])
+    add_cube([0.2, 0.4, 0.01], [1, 0, 1, 1])
+    add_cube([0, 0.4, 0.01], [0, 0, 1, 1])
 
     num_joints = p.getNumJoints(robot_id)
     print("Number of joints:", num_joints)
