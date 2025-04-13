@@ -126,9 +126,16 @@ def control_gripper(gripper_id, gripper_val):
     )
 
 
-def go_to_target(robot_id, target_pos, end_effector_index=6):
+def go_to_target(
+    robot_id,
+    target_pos,
+    target_orn=None,
+    end_effector_index=6,
+):
     """Move the robot to the target position."""
-    target_orn = p.getQuaternionFromEuler([0, 1.01 * math.pi, 0])
+    if target_orn is None:
+        target_orn = p.getQuaternionFromEuler([0, 1.01 * math.pi, 0])
+    target_orn = p.getQuaternionFromEuler(target_orn)
     joint_poses = p.calculateInverseKinematics(
         robot_id, end_effector_index, target_pos, target_orn
     )
@@ -138,6 +145,7 @@ def go_to_target(robot_id, target_pos, end_effector_index=6):
             jointIndex=j,
             controlMode=p.POSITION_CONTROL,
             targetPosition=joint_poses[j],
+            maxVelocity=4.0,
         )
 
 
