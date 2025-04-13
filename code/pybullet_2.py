@@ -219,24 +219,31 @@ def main():
     print("num_joints of gripper:", p.getNumJoints(gripper_id))
     end_effector_index = 6
 
-    cam = VirtualCamera([1, 1, 1], [1.400000, -0.200000, 0.0])
+    cam = VirtualCamera([0, 1, 0.4], [0.0, 0.0, 0.0])
 
     for step in range(1000):
-        _, _, rgb, _, _ = cam.capture()
+        _, _, rgb, d1, _ = cam.capture()
 
-        target_pos = [0.85, -0.2, 0.5]
-        gripper_val = 0.0
+        link_state = p.getLinkState(robot_id, end_effector_index)
+        end_effector_pos = link_state[0]
+        print(f"Step {step}: End effector position: {end_effector_pos}")
 
-        go_to_target(
-            robot_id,
-            target_pos,
-            end_effector_index=end_effector_index,
-        )
+        # target_pos = [0.85, -0.2, 0.3]
+        # gripper_val = 0.0
 
-        control_gripper(gripper_id, gripper_val)
+        # if step > 40:
+        #     target_pos = [0.8, -0.2, 1.0]
+        #     gripper_val = 1.0
+
+        # go_to_target(
+        #     robot_id,
+        #     target_pos,
+        #     end_effector_index=end_effector_index,
+        # )
+
+        # control_gripper(gripper_id, gripper_val)
 
         p.stepSimulation()
-        time.sleep(1.0 / 240.0)
 
     p.disconnect(p.GUI)
 
