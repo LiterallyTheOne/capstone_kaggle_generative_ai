@@ -232,7 +232,7 @@ def main():
     xyz_home = [0.3485885108719102, 0.19999583501695414, 0.6930555176178759]
     rpy_home = [-3.141589497304125, -0.5340481159455732, -3.1415741612872514]
 
-    xyz_1 = [0.2, 0.2, 0.01]
+    xyz_1 = [0, 0.2, 0.01]
     rpy_1 = [math.pi, 0, math.pi]
 
     xyz_2 = [0, 0, 0.01]
@@ -248,6 +248,10 @@ def main():
 
     switch_step = 0
 
+    previous_distanse = 0.0
+    distance_1 = 0.0
+    count_stuck = 0
+
     for step in range(1000):
         _, _, rgb, d1, _ = cam.capture()
 
@@ -255,6 +259,7 @@ def main():
         end_effector_pos = link_state[0]
         end_effector_orn = p.getEulerFromQuaternion(link_state[1])
 
+        previous_distanse = distance_1
         distance_1 = math.sqrt(
             (end_effector_pos[0] - target_pos[0]) ** 2
             + (end_effector_pos[1] - target_pos[1]) ** 2
@@ -265,7 +270,12 @@ def main():
                 switch_step = step
                 state += 1
 
-        if ((step - switch_step) > 50) and distance_1 < 0.08:
+        if (previous_distanse - distance_1) < 0.0001:
+            if distance_1 < 0.08:
+                count_stuck += 1
+
+        if count_stuck >= 10:
+            count_stuck = 0
             switch_step = step
             state += 1
 
