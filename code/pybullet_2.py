@@ -205,16 +205,6 @@ def main():
     p.loadURDF("plane.urdf")
     p.setGravity(0, 0, -9.81)
 
-    # shape_id = p.createCollisionShape(
-    #     shapeType=p.GEOM_MESH,
-    #     fileName="r_robot_description/meshes/base_link.STL",
-    # )
-    # body_id = p.createMultiBody(
-    #     baseCollisionShapeIndex=shape_id,
-    #     basePosition=(0, 0, 0),
-    #     baseOrientation=(0, 0, 0, 1),
-    # )
-
     # robot_id = load_kuka_with_gripper()[0]
 
     robot_id, gripper_id = load_robot_with_gripper()
