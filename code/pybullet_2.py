@@ -87,12 +87,6 @@ def robot_home(robot_id, gripper_id):
             robot_id, joint_index, p.POSITION_CONTROL, joint_positions[joint_index], 0
         )
 
-    p.resetBasePositionAndOrientation(
-        gripper_id,
-        [0.923103, -0.200000, 0.610000],
-        [-0.000000, 0.964531, -0.000002, -0.263970],
-    )
-
     joint_positions = [
         0.000000,
         -0.011130,
@@ -151,7 +145,7 @@ def load_robot_with_gripper():
     """Load the KUKA robot with a gripper attached."""
     robot_id = p.loadURDF(
         "kuka_iiwa/model_vr_limits.urdf",
-        basePosition=[1.400000, -0.200000, 0.0],
+        basePosition=[0.8, 0.200000, 0.0],
     )
     gripper_id = p.loadSDF("gripper/wsg50_one_motor_gripper_new_free_base.sdf")[0]
 
@@ -176,7 +170,17 @@ def load_robot_with_gripper():
         childFramePosition=[0, 0, 0],
     )
     p.changeConstraint(
-        kuka_cid2, gearRatio=-1, erp=0.5, relativePositionTarget=0, maxForce=100
+        kuka_cid2,
+        gearRatio=-1,
+        erp=0.5,
+        relativePositionTarget=0,
+        maxForce=100,
+    )
+
+    p.resetBasePositionAndOrientation(
+        gripper_id,
+        [0.3425886946075733, 0.2000395928174248, 0.6830544683658055],
+        [-0.000000, 0.964531, -0.000002, -0.263970],
     )
 
     robot_home(robot_id, gripper_id)
