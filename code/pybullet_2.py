@@ -65,7 +65,7 @@ def add_cube(
     """
     if color_rgba is None:
         color_rgba = [1, 1, 1, 1]
-    cube_id = p.loadURDF("cube.urdf", basePosition=position, globalScaling=0.08)
+    cube_id = p.loadURDF("cube.urdf", basePosition=position, globalScaling=0.09)
     p.changeVisualShape(cube_id, -1, rgbaColor=color_rgba)  # Change color to red
     return cube_id
 
