@@ -50,9 +50,23 @@ class VirtualCamera:
         )
 
 
-def add_cube(position):
-    """Add a cube to the simulation."""
-    cube_id = p.loadURDF("cube.urdf", basePosition=position, globalScaling=0.05)
+def add_cube(
+    position: list[float],
+    color_rgba: list[float] | None = None,
+) -> int:
+    """Add a cube to the simulation.
+
+    :param position: Position of the cube in world coordinates
+    :type position: list
+    :param color_rgba: Color of the cube in RGBA format
+    :type color_rgba: list
+    :return: ID of the cube
+    :rtype: int
+    """
+    if color_rgba is None:
+        color_rgba = [1, 1, 1, 1]
+    cube_id = p.loadURDF("cube.urdf", basePosition=position, globalScaling=0.08)
+    p.changeVisualShape(cube_id, -1, rgbaColor=color_rgba)  # Change color to red
     return cube_id
 
 
