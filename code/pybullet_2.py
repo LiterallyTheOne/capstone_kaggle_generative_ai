@@ -229,27 +229,118 @@ def main():
 
     cam = VirtualCamera([0, 1, 0.4], [0.0, 0.0, 0.0])
 
+    xyz_home = [0.3485885108719102, 0.19999583501695414, 0.6930555176178759]
+    rpy_home = [-3.141589497304125, -0.5340481159455732, -3.1415741612872514]
+
+    xyz_1 = [0.2, 0.2, 0.01]
+    rpy_1 = [math.pi, 0, math.pi]
+
+    xyz_2 = [0, 0, 0.01]
+    rpy_2 = [math.pi, 0, math.pi]
+
+    state = 0
+    target_pos = xyz_home.copy()
+    target_rpy = rpy_home.copy()
+    gripper_val = 0.0
+
+    z_offset_top = 0.5
+    z_offset_pick = 0.32
+
+    switch_step = 0
+
     for step in range(1000):
         _, _, rgb, d1, _ = cam.capture()
 
         link_state = p.getLinkState(robot_id, end_effector_index)
         end_effector_pos = link_state[0]
-        print(f"Step {step}: End effector position: {end_effector_pos}")
+        end_effector_orn = p.getEulerFromQuaternion(link_state[1])
 
-        # target_pos = [0.85, -0.2, 0.3]
-        # gripper_val = 0.0
+        distance_1 = math.sqrt(
+            (end_effector_pos[0] - target_pos[0]) ** 2
+            + (end_effector_pos[1] - target_pos[1]) ** 2
+            + (end_effector_pos[2] - target_pos[2]) ** 2
+        )
+        if distance_1 < 0.03:
+            if (step - switch_step) > 20:
+                switch_step = step
+                state += 1
 
-        # if step > 40:
-        #     target_pos = [0.8, -0.2, 1.0]
-        #     gripper_val = 1.0
+        if ((step - switch_step) > 50) and distance_1 < 0.08:
+            switch_step = step
+            state += 1
 
-        # go_to_target(
-        #     robot_id,
-        #     target_pos,
-        #     end_effector_index=end_effector_index,
-        # )
+        print(f"step: {step}")
+        print(f"\tEnd effector position: {end_effector_pos}")
+        print(f"\tEnd effector orientation: {end_effector_orn}")
+        print(f"\tstate: {state}")
+        print(f"\tdistance: {distance_1}")
 
-        # control_gripper(gripper_id, gripper_val)
+        if state == 0:
+            target_pos = xyz_home.copy()
+            target_rpy = rpy_home.copy()
+            gripper_val = 0
+        elif state == 1:
+            # go on top of the target
+            target_pos = xyz_1.copy()
+            target_pos[2] += z_offset_top
+            target_rpy = rpy_1.copy()
+            gripper_val = 0
+        elif state == 2:
+            # go to ready to pick position
+            target_pos = xyz_1.copy()
+            target_pos[2] += z_offset_pick
+            target_rpy = rpy_1.copy()
+            gripper_val = 0
+        elif state == 3:
+            # go to ready to pick position
+            target_pos = xyz_1.copy()
+            target_pos[2] += z_offset_pick
+            target_rpy = rpy_1.copy()
+            gripper_val = 1
+        elif state == 4:
+            # go to the top of the target with gripper closed
+            target_pos = xyz_1.copy()
+            target_pos[2] += z_offset_top
+            target_rpy = rpy_1.copy()
+            gripper_val = 1
+        elif state == 5:
+            # go to the top of the destination with gripper closed
+            target_pos = xyz_2.copy()
+            target_pos[2] += z_offset_top
+            target_rpy = rpy_2.copy()
+            gripper_val = 1
+        elif state == 6:
+            # go to the ready to place position
+            target_pos = xyz_2.copy()
+            target_pos[2] += z_offset_pick
+            target_rpy = rpy_2.copy()
+            gripper_val = 1
+        elif state == 7:
+            # place the object
+            target_pos = xyz_2.copy()
+            target_pos[2] += z_offset_pick
+            target_rpy = rpy_2.copy()
+            gripper_val = 0
+        elif state == 8:
+            # go to the top of the object
+            target_pos = xyz_2.copy()
+            target_pos[2] += z_offset_top
+            target_rpy = rpy_2.copy()
+            gripper_val = 0
+        elif state == 9:
+            # go to the home position
+            target_pos = xyz_home.copy()
+            target_rpy = rpy_home.copy()
+            gripper_val = 0
+
+        go_to_target(
+            robot_id,
+            target_pos,
+            target_rpy,
+            end_effector_index=end_effector_index,
+        )
+
+        control_gripper(gripper_id, gripper_val)
 
         p.stepSimulation()
 
