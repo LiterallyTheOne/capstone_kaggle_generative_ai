@@ -255,6 +255,7 @@ def main():
     previous_distanse = 0.0
     distance_1 = 0.0
     count_stuck = 0
+    max_velocity = 4.0
 
     for step in range(1000):
         _, _, rgb, d1, _ = cam.capture()
@@ -323,25 +324,14 @@ def main():
             target_pos[2] += z_offset_top
             target_rpy = rpy_2.copy()
             gripper_val = 1
+            max_velocity = 2.0
         elif state == 6:
-            # go to the ready to place position
-            target_pos = xyz_2.copy()
-            target_pos[2] += z_offset_pick
-            target_rpy = rpy_2.copy()
-            gripper_val = 1
-        elif state == 7:
-            # place the object
-            target_pos = xyz_2.copy()
-            target_pos[2] += z_offset_pick
-            target_rpy = rpy_2.copy()
-            gripper_val = 0
-        elif state == 8:
-            # go to the top of the object
+            # release the object
             target_pos = xyz_2.copy()
             target_pos[2] += z_offset_top
             target_rpy = rpy_2.copy()
             gripper_val = 0
-        elif state == 9:
+        elif state == 7:
             # go to the home position
             target_pos = xyz_home.copy()
             target_rpy = rpy_home.copy()
@@ -351,6 +341,7 @@ def main():
             robot_id,
             target_pos,
             target_rpy,
+            max_velocity=max_velocity,
             end_effector_index=end_effector_index,
         )
 
