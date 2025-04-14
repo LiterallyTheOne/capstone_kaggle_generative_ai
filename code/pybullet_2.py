@@ -231,7 +231,7 @@ def main():
     print("num_joints of gripper:", p.getNumJoints(gripper_id))
     end_effector_index = 6
 
-    cam = VirtualCamera([0, 1, 0.4], [0.0, 0.0, 0.0])
+    cam = VirtualCamera([0.6, -0.2, 1.5], [0.5, -0.5, 0.0])
 
     xyz_home = [0.3485885108719102, 0.19999583501695414, 0.6930555176178759]
     rpy_home = [-3.141589497304125, -0.5340481159455732, -3.1415741612872514]
