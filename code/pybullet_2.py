@@ -130,6 +130,7 @@ def go_to_target(
     robot_id,
     target_pos,
     target_orn=None,
+    max_velocity=4.0,
     end_effector_index=6,
 ):
     """Move the robot to the target position."""
@@ -145,7 +146,7 @@ def go_to_target(
             jointIndex=j,
             controlMode=p.POSITION_CONTROL,
             targetPosition=joint_poses[j],
-            maxVelocity=4.0,
+            maxVelocity=max_velocity,
         )
 
 
