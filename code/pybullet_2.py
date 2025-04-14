@@ -214,6 +214,9 @@ def main():
     p.loadURDF("plane.urdf")
     p.setGravity(0, 0, -9.81)
 
+    # p.loadSDF("kitchens/1.sdf")
+    p.loadURDF("tray/tray.urdf", [0.6, -0.2, 0.01])
+
     # robot_id = load_kuka_with_gripper()[0]
 
     robot_id, gripper_id = load_robot_with_gripper()
