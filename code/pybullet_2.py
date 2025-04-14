@@ -215,7 +215,7 @@ def main():
     p.setGravity(0, 0, -9.81)
 
     # p.loadSDF("kitchens/1.sdf")
-    p.loadURDF("tray/tray.urdf", [0.6, -0.2, 0.01])
+    p.loadURDF("tray/tray.urdf", [0.7, -0.3, 0.01])
 
     # robot_id = load_kuka_with_gripper()[0]
 
