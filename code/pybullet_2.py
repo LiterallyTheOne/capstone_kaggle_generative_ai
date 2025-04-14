@@ -1,6 +1,5 @@
 """pybullet_2"""
 
-import time
 import math
 
 import pybullet as p
