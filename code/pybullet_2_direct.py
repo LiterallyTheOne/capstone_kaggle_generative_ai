@@ -210,7 +210,8 @@ def load_kuka_with_gripper():
 
 def main():
     """main function"""
-    p.connect(p.DIRECT)
+    client = p.connect(p.DIRECT)
+    p.resetSimulation()
     p.setAdditionalSearchPath(pybullet_data.getDataPath())
 
     # Load plane and set gravity
@@ -260,7 +261,7 @@ def main():
     count_stuck = 0
     max_velocity = 4.0
 
-    vid = imageio_ffmpeg.write_frames("vid.mp4", (640, 480), fps=30)
+    vid = imageio_ffmpeg.write_frames("output.mp4", (640, 480), fps=30)
     vid.send(None)  # seed the video writer with a blank frame
 
     for step in range(1000):
@@ -359,7 +360,9 @@ def main():
 
         p.stepSimulation()
 
-    p.disconnect(p.DIRECT)
+    if client != -1:
+        print("disconnected")
+        p.disconnect(client)
 
 
 if __name__ == "__main__":
